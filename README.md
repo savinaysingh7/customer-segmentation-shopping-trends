@@ -1,168 +1,221 @@
+# Customer Segmentation Using Shopping Trends Data
 
-# 🛍️ Customer Segmentation Using Machine Learning
+This repository contains an end-to-end customer segmentation project built on a retail shopping dataset with 3,900 transactions. The project covers data preprocessing, exploratory data analysis, feature engineering, K-Means clustering, and business reporting through a Power BI dashboard and a PDF summary.
 
-This project implements an end-to-end data science pipeline to segment retail customers based on their shopping behavior and demographics. The goal is to uncover meaningful customer segments for targeted marketing, loyalty campaigns, and business strategy.
+The workflow starts from `shopping_trends.csv`, creates intermediate analysis artifacts, and ends with `shopping_trends_clustered.csv`, where each record is assigned to one of four customer segments.
 
----
+## Description
 
-## 📌 Table of Contents
+The goal of the project is to group customers by shopping behavior so the resulting segments can support more targeted marketing, retention, and merchandising decisions.
 
-* [Project Overview](#project-overview)
-* [Problem Statement](#problem-statement)
-* [Tools & Technologies](#tools--technologies)
-* [Workflow / Project Flow](#workflow--project-flow)
-* [Key Features](#key-features)
-* [Power BI Dashboard](#power-bi-dashboard)
-* [Results & Insights](#results--insights)
-* [How to Use](#how-to-use)
-* [Project Structure](#project-structure)
-* [License](#license)
+From the notebooks and generated outputs in this repository, the pipeline does the following:
 
----
+- Cleans and encodes the raw shopping trends dataset.
+- Explores customer patterns across demographics, category preferences, seasonality, and spending.
+- Engineers segmentation-focused features such as a CLV proxy, purchase frequency score, age group, discount sensitivity, and seasonal flags.
+- Builds a 4-cluster K-Means model on the engineered dataset.
+- Publishes analysis artifacts for both technical review and business-facing reporting.
 
-## 🚀 Project Overview
+The committed outputs show:
 
-In this project, we analyzed a retail shopping dataset with 3,900+ transactions. We applied machine learning and business analytics to:
+- `shopping_trends.csv`: 3,900 rows and 19 columns.
+- No missing values in the raw dataset.
+- No duplicate rows in the raw dataset.
+- `shopping_trends_clustered.csv`: 3,900 rows labeled with 4 clusters.
 
-* Preprocess and clean data
-* Perform exploratory data analysis (EDA)
-* Engineer new features like CLV (Customer Lifetime Value)
-* Apply clustering (K-Means) to find customer groups
-* Visualize and interpret insights using Power BI
+## Key Features
 
----
+- End-to-end notebook workflow from raw data to clustered output.
+- Separate preprocessing, EDA, feature engineering, and clustering stages.
+- One-hot encoding and standardization for modeling-ready features.
+- Engineered customer metrics including:
+  - `CLV`
+  - `Purchase_Frequency_Score`
+  - `Age_Group`
+  - `Discount_Sensitivity`
+  - `Dominant_Category`
+  - `Winter_Spring_Buyer`
+  - `Review_Rating_Category`
+- K-Means clustering with elbow-curve and silhouette-score inspection.
+- PCA-based 2D visualization of customer segments.
+- Power BI dashboard artifact for interactive business analysis.
+- PDF report summarizing the project and business insights.
 
-## 🎯 Problem Statement
+## Tech Stack
 
-Retail businesses often struggle to understand diverse customer behaviors. By grouping similar customers together, businesses can tailor offerings, increase retention, and boost sales. This project aims to:
+| Area | Tools |
+| --- | --- |
+| Language | Python |
+| Analysis | pandas, numpy |
+| Visualization | matplotlib, seaborn, plotly |
+| Machine Learning | scikit-learn |
+| Notebook Environment | Jupyter Notebook |
+| BI / Reporting | Power BI Desktop, PDF |
+| Data Storage | CSV |
 
-* Identify **high-value customers**
-* Find **discount-sensitive** or **seasonal** shoppers
-* Enable **data-driven marketing decisions**
+The repository's `requirements.txt` includes:
 
----
+- `pandas`
+- `numpy`
+- `matplotlib`
+- `seaborn`
+- `scikit-learn`
+- `jupyter`
+- `openpyxl`
 
-## 🛠️ Tools & Technologies
+Note: `clustering_shopping_trends.ipynb` imports `plotly.express`, but `plotly` is not currently listed in `requirements.txt`. Install it separately before running that notebook.
 
-* **Python**: Core language for preprocessing, analysis, and ML
-* **Pandas, NumPy**: Data manipulation
-* **Matplotlib, Seaborn**: Visualization
-* **Scikit-learn**: Clustering (K-Means), encoding, scaling
-* **Power BI**: Dashboard for interactive data exploration
-* **Jupyter Notebook**: Code notebooks and analysis workflow
+## Folder Structure
 
----
-
-## 📊 Workflow / Project Flow
-
-```bash
-graph TD
-A[Raw Dataset: shopping_trends.csv]
-B[Data Preprocessing]
-C[Exploratory Data Analysis (EDA)]
-D[Feature Engineering]
-E[Clustering with K-Means]
-F[Segment Profiling]
-G[Power BI Dashboard]
-
-A --> B --> C --> D --> E --> F --> G
+```text
+customer-segmentation-shopping-trends/
+|-- README.md
+|-- requirements.txt
+|-- Links.txt
+|-- shopping_trends.csv
+|-- preprocessed_shopping_trends.csv
+|-- shopping_trends_engineered.csv
+|-- shopping_trends_clustered.csv
+|-- preprocess_shopping_trends.ipynb
+|-- eda_shopping_trends.ipynb
+|-- feature_engineering_shopping_trends.ipynb
+|-- clustering_shopping_trends.ipynb
+|-- customer_seg_dashboard.pbix
+`-- Customer Segmentation for Business Insights.pdf
 ```
 
-### 🔁 Step-by-Step Breakdown:
+## Project Workflow
 
-1. **Preprocessing** (`preprocess_shopping_trends.ipynb`)
+1. `preprocess_shopping_trends.ipynb`
+   - Loads `shopping_trends.csv`
+   - Removes `Customer ID`
+   - Checks missing values and duplicates
+   - Inspects outliers and caps `Purchase Amount (USD)` at the 95th percentile
+   - Standardizes numeric columns and one-hot encodes categorical columns
+   - Saves `preprocessed_shopping_trends.csv`
 
-   * Removed non-informative IDs
-   * Handled outliers and encoded categorical variables
-   * Scaled numerical features for modeling
+2. `eda_shopping_trends.ipynb`
+   - Explores distributions and summary statistics
+   - Generates histograms, box plots, pair plots, and correlation heatmaps
+   - Studies relationships across gender, category, location, season, and purchase behavior
 
-2. **EDA** (`eda_shopping_trends.ipynb`)
+3. `feature_engineering_shopping_trends.ipynb`
+   - Loads the raw dataset
+   - Adds engineered features used for segmentation
+   - Saves `shopping_trends_engineered.csv`
 
-   * Analyzed demographics, spend patterns, reviews
-   * Explored relationships between features
-   * Identified spending trends and potential segments
+4. `clustering_shopping_trends.ipynb`
+   - Loads `shopping_trends_engineered.csv`
+   - Reapplies scaling and one-hot encoding for clustering
+   - Compares cluster counts using elbow and silhouette methods
+   - Fits K-Means with `n_clusters=4`
+   - Adds a `Cluster` column
+   - Saves `shopping_trends_clustered.csv`
 
-3. **Feature Engineering** (`feature_engineering_shopping_trends.ipynb`)
+5. `customer_seg_dashboard.pbix`
+   - Provides the business-facing visualization layer in Power BI
+   - The committed dashboard contains a single page with cards, categorical charts, slicers, and a map visual
 
-   * Added CLV (Purchase Amount × Previous Purchases)
-   * Created Age Groups, Discount Sensitivity flag, Frequency Score
-   * Labeled Seasonal Buyers and Rating Levels
+## Installation
 
-4. **Clustering** (`clustering_shopping_trends.ipynb`)
-
-   * Used KMeans to segment customers into 4 groups
-   * Evaluated clusters using silhouette score & elbow method
-   * Interpreted segment characteristics: high-value, deal-seekers, seasonal shoppers
-
-5. **Dashboard** (`customer_seg_dashboard.pbix`)
-
-   * Interactive filters for cluster, gender, location
-   * KPIs, CLV analysis, spending heatmaps
-   * Segment-wise drill-downs
-
----
-
-## ✅ Key Features
-
-* 🧼 Clean and standardized dataset
-* 🧠 Feature-rich customer profile modeling
-* 📈 KMeans clustering with interpretability
-* 📊 Business-ready Power BI dashboard
-* 🔍 Actionable segment insights
-
----
-
-## 📉 Power BI Dashboard
-
-The Power BI dashboard provides:
-
-* Cluster-wise performance (CLV, frequency, purchase amount)
-* Demographic filters (Gender, Age Group, State)
-* Purchase category breakdown
-* Seasonal trends and discount usage
-
-> 📁 File: `customer_seg_dashboard.pbix`
-> 🔑 Available for preview if you have Power BI Desktop
-
----
-
-## 🧠 Results & Insights
-
-* **Cluster 2**: High CLV, frequent male shoppers — top priority for retention
-* **Cluster 1**: Discount-loving, male-only group — respond well to deals
-* **Cluster 0**: Female seasonal buyers (Winter/Spring) — not subscribed yet
-* **Cluster 3**: Female Summer/Fall buyers — non-discount, non-subscribers
-
-Business Recommendation: Customize promotions per cluster, build loyalty incentives for female segments, and reward high-value customers.
-
----
-
-## 📂 Project Structure
+### 1. Clone the repository
 
 ```bash
-├── shopping_trends.csv                     # Raw dataset
-├── preprocess_shopping_trends.ipynb       # Data cleaning and encoding
-├── eda_shopping_trends.ipynb              # Visual EDA
-├── feature_engineering_shopping_trends.ipynb  # New features creation
-├── clustering_shopping_trends.ipynb       # KMeans clustering & evaluation
-├── customer_seg_dashboard.pbix            # Power BI dashboard
-├── project_report.pdf                     # Final report (optional)
-└── README.md                              # You're here!
+git clone https://github.com/savinaysingh7/customer-segmentation-shopping-trends.git
+cd customer-segmentation-shopping-trends
 ```
 
----
+### 2. Create and activate a virtual environment
 
-## 🧪 How to Use
+Windows:
 
-1. Clone this repository
-2. Open the notebooks in Jupyter or VSCode
-3. Follow the flow: preprocessing → EDA → feature engineering → clustering
-4. Open `customer_seg_dashboard.pbix` using **Power BI Desktop** to explore visualizations
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
 
----
+macOS / Linux:
 
-## 📜 License
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
-This project is for educational use. You are free to fork and build upon it for academic or personal portfolios.
+### 3. Install dependencies
 
----
+```bash
+pip install -r requirements.txt
+pip install plotly
+```
+
+### 4. Optional tools
+
+- Install Power BI Desktop to open `customer_seg_dashboard.pbix`.
+- Use Jupyter Notebook or JupyterLab to run the notebooks interactively.
+
+## Usage
+
+### Run the notebook pipeline
+
+Start Jupyter:
+
+```bash
+jupyter notebook
+```
+
+Recommended notebook order:
+
+1. `preprocess_shopping_trends.ipynb`
+2. `eda_shopping_trends.ipynb`
+3. `feature_engineering_shopping_trends.ipynb`
+4. `clustering_shopping_trends.ipynb`
+
+This sequence gives you the full project flow from cleaning through segmentation. The clustering notebook depends on `shopping_trends_engineered.csv`, which is produced by the feature engineering notebook.
+
+### Use the pre-generated outputs directly
+
+If you only want to inspect the finished results, you can skip notebook execution and use these committed files directly:
+
+- `preprocessed_shopping_trends.csv`
+- `shopping_trends_engineered.csv`
+- `shopping_trends_clustered.csv`
+- `customer_seg_dashboard.pbix`
+- `Customer Segmentation for Business Insights.pdf`
+
+### Open the dashboard
+
+Open `customer_seg_dashboard.pbix` with Power BI Desktop to explore the final dashboard interactively.
+
+## Example Usage
+
+Use the final clustered dataset in Python:
+
+```python
+import pandas as pd
+
+df = pd.read_csv("shopping_trends_clustered.csv")
+
+print(df["Cluster"].value_counts().sort_index())
+print(df.groupby("Cluster")[["CLV", "Purchase Amount (USD)"]].mean().round(2))
+```
+
+Expected cluster counts from the committed output:
+
+```text
+Cluster
+0     914
+1    1333
+2     760
+3     893
+```
+
+Example questions you can answer with the final dataset:
+
+- Which segment has the highest CLV?
+- Which customers are most discount-sensitive?
+- How do seasonality and gender vary across clusters?
+- Which segments are most likely to benefit from loyalty or subscription campaigns?
+
+## License
+
+This repository does not currently include a standalone `LICENSE` file. If you want others to reuse, modify, or distribute the project with clear legal terms, add a license file such as MIT, Apache-2.0, or GPL-3.0.
